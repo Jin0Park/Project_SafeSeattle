@@ -1,0 +1,54 @@
+Use PM2;
+
+DROP TABLE IF EXISTS Posts;
+DROP TABLE IF EXISTS Comments;
+
+DROP TABLE IF EXISTS Posts;
+CREATE TABLE Posts(
+	PostId INTEGER,
+	UserId INTEGER,
+	ReportId VARCHAR(255),
+	Title VARCHAR(255),
+	Content TEXT,
+	Created TIMESTAMP,
+	CONSTRAINT pk_Posts_PostId PRIMARY KEY (PostId),
+	CONSTRAINT fk_Posts_UserId FOREIGN KEY (UserId)
+		REFERENCES PM2.Users (UserId) ON UPDATE CASCADE ON DELETE SET NULL,
+	CONSTRAINT fk_Posts_ReportId FOREIGN KEY (ReportId)
+		REFERENCES PM2.Reports (ReportId) ON UPDATE CASCADE ON DELETE SET NULL
+);
+
+
+CREATE TABLE Comments(
+	CommentId INTEGER AUTO_INCREMENT,
+    UserId INTEGER,
+    PostId INTEGER,
+    Content TEXT,
+    Created TIMESTAMP,
+    CONSTRAINT pk_Comments_CommentId PRIMARY KEY (CommentId),
+    CONSTRAINT fk_Comments_PostId FOREIGN KEY (PostId)
+		REFERENCES Posts (PostId) ON UPDATE CASCADE ON DELETE CASCADE,
+	CONSTRAINT fk_Comments_UserId FOREIGN KEY (UserId)
+		REFERENCES PM2.Users (UserId) ON UPDATE CASCADE ON DELETE SET NULL
+);
+
+
+LOAD DATA INFILE '/Users/alexisflorence/NEU/cs5200/data/Posts.csv' IGNORE INTO TABLE Posts
+	FIELDS TERMINATED BY ',' 
+    ENCLOSED BY '"'
+	LINES TERMINATED BY '\n'
+    IGNORE 1 LINES;
+
+
+LOAD DATA INFILE '/Users/alexisflorence/NEU/cs5200/data/Comments.csv' IGNORE INTO TABLE Comments
+	FIELDS TERMINATED BY ',' 
+    ENCLOSED BY '"'
+	LINES TERMINATED BY '\n'
+    IGNORE 1 LINES
+    (UserId, PostId, Content, Created);
+    
+    
+SELECT count(*) from Comments, Posts;
+SELECT * from Comments;
+SELECT * FROM Posts;
+
